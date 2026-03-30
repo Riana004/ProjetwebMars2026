@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Si le fichier existe dans public (ex: css/style.css), on l'affiche
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Sinon, on transforme "nom-page.html" en "index.php?slug=nom-page"
+RewriteRule ^([a-zA-Z0-9-]+)\.html$ index.php?slug=$1 [L,QSA]
+
+# Racine du site vers l'accueil
+RewriteRule ^$ index.php?slug=accueil [L]

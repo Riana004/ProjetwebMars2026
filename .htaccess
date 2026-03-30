@@ -1,13 +1,8 @@
 RewriteEngine On
 
-# Empêche de lister le contenu des dossiers
-Options -Indexes
-
-# Redirection vers le FrontOffice (public/index.php)
-# Exemple : monsite.fr/article/ma-page -> public/index.php?slug=ma-page
+# Si on demande un fichier qui existe à la racine (rare), on le laisse passer
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^article/([a-zA-Z0-9-]+)$ public/index.php?slug=$1 [L,QSA]
 
-# Redirection par défaut vers l'accueil
-RewriteRule ^$ public/index.php?slug=accueil [L]
+# Sinon, on envoie tout vers le dossier public
+RewriteRule ^(.*)$ public/$1 [L]
