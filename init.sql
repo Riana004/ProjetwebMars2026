@@ -1,4 +1,4 @@
-create table pages (
+create table if not exists pages (
     id serial primary key,
     slug varchar(255) not null unique,
     title varchar(255) not null,

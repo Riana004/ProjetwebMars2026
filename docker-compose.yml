@@ -34,7 +34,9 @@ services:
     networks:
       - iran-network
     command: >
-      sh -c "docker-php-ext-install pdo pdo_pgsql && 
+      sh -c "apt-get update && 
+             apt-get install -y libpq-dev && 
+             docker-php-ext-install pdo pdo_pgsql && 
              a2enmod rewrite && 
              sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf &&
              apache2-foreground"
