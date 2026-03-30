@@ -1,68 +1,191 @@
 <?php
-// Protection simple par session (à coupler avec votre système de login)
 session_start();
-// if (!isset($_SESSION['user'])) { header('Location: login.php'); exit; }
-
-// Simulation de récupération d'une page existante (pour le mode édition)
-$page_id = $_GET['id'] ?? 1;
+// Identifiants par défaut pour Mr Rojo : admin / password
 $title = "Nouvelle page sur l'Iran";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="utf-8">
     <title>Backoffice - Éditeur de contenu</title>
     <link rel="stylesheet" href="//unpkg.com/grapesjs/dist/css/grapes.min.css">
     <script src="//unpkg.com/grapesjs"></script>
-    <style> 
-        body, html { height: 100%; margin: 0; overflow: hidden; }
-        #gjs { border: 3px solid #444; }
-        .panel__top { padding: 10px; background: #2c3e50; color: white; display: flex; justify-content: space-between; }
-        .save-btn { background: #27ae60; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; }
-        .save-btn:hover { background: #2ecc71; }
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        /* Structure de la page */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .panel__top {
+            padding: 10px;
+            background: #2c3e50;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* L'éditeur à gauche */
+        #gjs {
+            flex: 1;
+            border: none;
+        }
+
+        /* La barre de blocs à droite (L'élément MANQUANT) */
+        #blocks-container {
+            width: 250px;
+            background: #34495e;
+            color: white;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .gjs-block {
+            width: 100% !important;
+            min-height: 50px !important;
+            margin-bottom: 10px !important;
+            background-color: #2c3e50 !important;
+            color: white !important;
+        }
+
+        .save-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .save-btn:hover {
+            background: #2ecc71;
+        }
     </style>
 </head>
+
 <body>
 
-    <div class="panel__top">
-        <div>
-            <strong>Backoffice</strong> | 
-            Titre : <input type="text" id="page-title" value="<?= htmlspecialchars($title) ?>" style="padding: 5px;">
+    <div class="app-container">
+        <div class="panel__top">
+            <div>
+                <strong>Backoffice</strong> |
+                Titre : <input type="text" id="page-title" value="<?= htmlspecialchars($title) ?>"
+                    style="padding: 5px; border-radius: 3px; border: none;">
+            </div>
+            <button class="save-btn" onclick="saveContent()">Enregistrer la page</button>
         </div>
-        <button class="save-btn" onclick="saveContent()">Enregistrer la page</button>
-    </div>
 
-    <div id="gjs">
-        <h1>Guerre en Iran</h1>
-        <p>Commencez à rédiger votre article d'information ici...</p>
+        <div class="main-content">
+            <div id="gjs">
+                <h1>Guerre en Iran</h1>
+                <p>Commencez à rédiger votre article d'information ici...</p>
+            </div>
+
+            <div id="blocks-container">
+                <h3 style="font-size: 14px; text-align: center;">Éléments à glisser</h3>
+                <div id="blocks"></div>
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript">
-        // Initialisation de GrapesJS
         const editor = grapesjs.init({
             container: '#gjs',
             fromElement: true,
-            height: '90vh',
+            height: '100%',
             width: 'auto',
-            storageManager: false, // On gère le stockage nous-mêmes via l'API
+            storageManager: false,
             blockManager: {
-                appendTo: '#blocks',
+                appendTo: '#blocks', // C'est ici que les blocs vont s'afficher
                 blocks: [
-                    { id: 'section', label: '<b>Section</b>', attributes: { class: 'gjs-block-section' }, content: '<section><h1>Titre H1</h1><p>Texte de la section</p></section>' },
-                    { id: 'text', label: 'Texte', content: '<div data-gjs-type="text">Insérez votre texte ici</div>' },
-                    { id: 'image', label: 'Image', select: true, content: { type: 'image' }, activate: true }
+                    {
+                        id: 'h1',
+                        label: 'Titre H1',
+                        category: 'Titres',
+                        content: '<h1 data-gjs-type="text">Titre Principal</h1>'
+                    },
+                    {
+                        id: 'h2',
+                        label: 'Sous-titre H2',
+                        category: 'Titres',
+                        content: '<h2 data-gjs-type="text">Sous-titre</h2>'
+                    },
+                    {
+                        id: 'h3',
+                        label: 'Sous-titre h3',
+                        category: 'Titres',
+                        content: '<h3 data-gjs-type="text">Sous-titre</h3>'
+                    },
+                    {
+                        id: 'h4',
+                        label: 'Sous-titre h4',
+                        category: 'Titres',
+                        content: '<h4 data-gjs-type="text">Sous-titre</h4>'
+                    },
+                    {
+                        id: 'h5',
+                        label: 'Sous-titre h5',
+                        category: 'Titres',
+                        content: '<h5 data-gjs-type="text">Sous-titre</h5>'
+                    },
+                    {
+                        id: 'h6',
+                        label: 'Sous-titre h6',
+                        category: 'Titres',
+                        content: '<h6 data-gjs-type="text">Sous-titre</h6>'
+                    },
+                    {
+                        id: 'text',
+                        label: 'Paragraphe',
+                        category: 'Contenu',
+                        content: '<p data-gjs-type="text">Votre texte ici...</p>'
+                    },
+                    {
+                        id: 'image',
+                        label: 'Image',
+                        category: 'Contenu',
+                        select: true,
+                        // Configuration avancée de l'image pour le SEO
+                        content: {
+                            type: 'image',
+                            traits: [ // <--- C'est ici que ça se passe
+                                'alt', // Champ simple pour modifier le texte alternatif
+                                {
+                                    type: 'text',
+                                    label: 'Texte alternatif (SEO)', // Libellé pour l'utilisateur
+                                    name: 'alt',
+                                }
+                            ]
+                        },
+                        activate: true
+                    }
                 ]
             }
         });
 
-        // Fonction pour envoyer les données au serveur PHP (save_page.php)
+        // Sauvegarde (inchangée mais assure-toi que save_page.php existe)
         async function saveContent() {
-            const htmlContent = editor.getHtml();
-            const cssContent = editor.getCss();
+            const html = editor.getHtml();
+            const css = editor.getCss();
             const title = document.getElementById('page-title').value;
-
-            // Fusion du HTML et CSS pour le stockage
-            const fullContent = `<style>${cssContent}</style>${htmlContent}`;
+            const fullContent = `<style>${css}</style>${html}`;
 
             try {
                 const response = await fetch('save_page.php', {
@@ -71,21 +194,14 @@ $title = "Nouvelle page sur l'Iran";
                     body: JSON.stringify({
                         title: title,
                         content: fullContent,
-                        slug: title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+                        slug: title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
                     })
                 });
-
                 const result = await response.json();
-                if (result.status === 'success') {
-                    alert('Page enregistrée avec succès !');
-                } else {
-                    alert('Erreur lors de l\'enregistrement.');
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('Erreur de connexion au serveur.');
-            }
+                alert(result.status === 'success' ? 'Page enregistrée !' : 'Erreur SQL.');
+            } catch (e) { alert('Erreur serveur.'); }
         }
     </script>
 </body>
+
 </html>

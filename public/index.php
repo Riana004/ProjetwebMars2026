@@ -24,9 +24,9 @@ $categories = $pdo->query(
 if (!$page) {
     header('HTTP/1.1 404 Not Found');
     $page = [
-        'title'    => 'Page non trouvée',
-        'content'  => '<h2>Oups !</h2><p>Le contenu que vous recherchez n\'existe pas.</p>',
-        'meta_desc'=> 'Erreur 404 – Page introuvable sur Info Guerre Iran.',
+        'title' => 'Page non trouvée',
+        'content' => '<h2>Oups !</h2><p>Le contenu que vous recherchez n\'existe pas.</p>',
+        'meta_desc' => 'Erreur 404 – Page introuvable sur Info Guerre Iran.',
     ];
 }
 
@@ -35,29 +35,30 @@ if (!$page) {
 $metaDesc = mb_substr(strip_tags($page['meta_desc']), 0, 159);
 
 // Construction de l'URL canonique (cours p.9 – évite le contenu dupliqué)
-$proto    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host     = htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'example.com', ENT_QUOTES);
+$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'example.com', ENT_QUOTES);
 $canonical = $proto . '://' . $host . '/index.php?slug=' . urlencode($slug);
 
 // Titre de page : mot-clé en premier, ≤ 60 car. (cours p.8)
 $pageTitle = htmlspecialchars($page['title'], ENT_QUOTES)
-           . ' | Actualités Iran 2026';
+    . ' | Actualités Iran 2026';
 
 // Données structurées JSON-LD (cours p.12 – Schema.org)
 $jsonLd = json_encode([
     '@context' => 'https://schema.org',
-    '@type'    => ($slug === 'accueil') ? 'WebSite' : 'Article',
+    '@type' => ($slug === 'accueil') ? 'WebSite' : 'Article',
     'headline' => $page['title'],
-    'url'      => $canonical,
-    'publisher'=> [
+    'url' => $canonical,
+    'publisher' => [
         '@type' => 'Organization',
-        'name'  => 'Info Guerre Iran',
-        'url'   => $proto . '://' . $host,
+        'name' => 'Info Guerre Iran',
+        'url' => $proto . '://' . $host,
     ],
 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
 
@@ -93,18 +94,18 @@ $jsonLd = json_encode([
         Valeurs par défaut : index, follow.
         À changer en "noindex, nofollow" pour les pages privées ou les erreurs 404.
     -->
-<?php if (!$page || $slug === '404'): ?>
-    <meta name="robots" content="noindex, nofollow">
-<?php else: ?>
-    <meta name="robots" content="index, follow">
-<?php endif; ?>
+    <?php if (!$page || $slug === '404'): ?>
+        <meta name="robots" content="noindex, nofollow">
+    <?php else: ?>
+        <meta name="robots" content="index, follow">
+    <?php endif; ?>
 
     <!-- Open Graph (booste les partages → signal indirect de popularité) -->
-    <meta property="og:title"       content="<?= htmlspecialchars($page['title'], ENT_QUOTES) ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($page['title'], ENT_QUOTES) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc, ENT_QUOTES) ?>">
-    <meta property="og:url"         content="<?= $canonical ?>">
-    <meta property="og:type"        content="<?= $slug === 'accueil' ? 'website' : 'article' ?>">
-    <meta property="og:locale"      content="fr_FR">
+    <meta property="og:url" content="<?= $canonical ?>">
+    <meta property="og:type" content="<?= $slug === 'accueil' ? 'website' : 'article' ?>">
+    <meta property="og:locale" content="fr_FR">
 
     <!--
         SEO Technique – Données structurées JSON-LD / Schema.org (cours p.12)
@@ -123,11 +124,11 @@ $jsonLd = json_encode([
         (impact direct sur le LCP – cible < 2,5 s).
     -->
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap"
-          media="print" onload="this.media='all'">
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap"
+        media="print" onload="this.media='all'">
     <noscript>
         <link rel="stylesheet"
-              href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap">
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap">
     </noscript>
 
     <link rel="stylesheet" href="/css/style.css">
@@ -136,6 +137,7 @@ $jsonLd = json_encode([
 <!--
     Accessibilité + SEO sémantique : attribut lang sur <html>.
 -->
+
 <body>
 
     <!-- ── HEADER ─────────────────────────────────────────────────────────── -->
@@ -151,7 +153,7 @@ $jsonLd = json_encode([
 
             <!-- Bouton hamburger (mobile) -->
             <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav"
-                    aria-label="Ouvrir le menu de navigation">
+                aria-label="Ouvrir le menu de navigation">
                 <span></span><span></span><span></span>
             </button>
 
@@ -167,12 +169,11 @@ $jsonLd = json_encode([
                         </a>
                     </li>
                     <?php foreach ($categories as $cat): ?>
-                    <li>
-                        <a href="<?= urlencode($cat['slug']) ?>.html" 
-                        <?= $slug === $cat['slug'] ? 'aria-current="page"' : '' ?>>
-                            <?= htmlspecialchars($cat['title']) ?>
-                        </a>
-                    </li>
+                        <li>
+                            <a href="<?= urlencode($cat['slug']) ?>.html" <?= $slug === $cat['slug'] ? 'aria-current="page"' : '' ?>>
+                                <?= htmlspecialchars($cat['title']) ?>
+                            </a>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
             </nav>
@@ -210,22 +211,21 @@ $jsonLd = json_encode([
 
             <!-- ── GRILLE CATÉGORIES (page d'accueil uniquement) ─────────── -->
             <?php if ($slug === 'accueil' && !empty($categories)): ?>
-            <section class="secondary-content" aria-labelledby="dossiers-heading">
-                <h2 id="dossiers-heading">Dossiers Spéciaux &amp; Analyses</h2>
-                
-                <div class="category-grid">
-                    <?php foreach ($categories as $item): ?>
-                    <div class="card">
-                        <h3><?= htmlspecialchars($item['title']) ?></h3>
-                        <a href="<?= urlencode($item['slug']) ?>.html"
-                        class="btn-link"
-                        title="Lire le dossier complet : <?= htmlspecialchars($item['title']) ?>">
-                            Consulter le dossier
-                        </a>
+                <section class="secondary-content" aria-labelledby="dossiers-heading">
+                    <h2 id="dossiers-heading">Dossiers Spéciaux &amp; Analyses</h2>
+
+                    <div class="category-grid">
+                        <?php foreach ($categories as $item): ?>
+                            <div class="card">
+                                <h3><?= htmlspecialchars($item['title']) ?></h3>
+                                <a href="<?= urlencode($item['slug']) ?>.html" class="btn-link"
+                                    title="Lire le dossier complet : <?= htmlspecialchars($item['title']) ?>">
+                                    Consulter le dossier
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
-                </div>
-            </section>
+                </section>
             <?php endif; ?>
 
         </article>
@@ -242,11 +242,11 @@ $jsonLd = json_encode([
                 <ul class="footer-links">
                     <li><a href="/?slug=accueil">Accueil</a></li>
                     <?php foreach ($categories as $cat): ?>
-                    <li>
-                        <a href="/?slug=<?= urlencode($cat['slug']) ?>">
-                            <?= htmlspecialchars($cat['title']) ?>
-                        </a>
-                    </li>
+                        <li>
+                            <a href="/?slug=<?= urlencode($cat['slug']) ?>">
+                                <?= htmlspecialchars($cat['title']) ?>
+                            </a>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
             </nav>
@@ -258,17 +258,18 @@ $jsonLd = json_encode([
     </footer>
 
     <script>
-    // ── Hamburger menu (Mobile-First – touch targets ≥ 48 px) ────────────
-    const toggle = document.querySelector('.nav-toggle');
-    const nav    = document.getElementById('main-nav');
-    if (toggle && nav) {
-        toggle.addEventListener('click', () => {
-            const open = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', String(!open));
-            nav.classList.toggle('is-open', !open);
-        });
-    }
+        // ── Hamburger menu (Mobile-First – touch targets ≥ 48 px) ────────────
+        const toggle = document.querySelector('.nav-toggle');
+        const nav = document.getElementById('main-nav');
+        if (toggle && nav) {
+            toggle.addEventListener('click', () => {
+                const open = toggle.getAttribute('aria-expanded') === 'true';
+                toggle.setAttribute('aria-expanded', String(!open));
+                nav.classList.toggle('is-open', !open);
+            });
+        }
     </script>
 
 </body>
+
 </html>
