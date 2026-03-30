@@ -1,0 +1,434 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Info Guerre Iran — style.css
+   Thème : Presse d'investigation · Editorial dark · Typographie soignée
+   SEO Technique : Core Web Vitals (LCP / CLS / INP) pris en compte
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 0. Variables ──────────────────────────────────────────────────────────── */
+:root {
+    --ink:        #0d0d0d;
+    --paper:      #f7f4ef;
+    --red:        #c0392b;
+    --red-dark:   #922b21;
+    --gold:       #b8962e;
+    --mid:        #4a4a4a;
+    --light:      #e8e4dd;
+    --white:      #ffffff;
+
+    /* Layout */
+    --max-w:      1120px;
+    --gap:        clamp(1rem, 3vw, 2rem);
+    --radius:     4px;
+
+    /* Typo */
+    --serif:      'Playfair Display', Georgia, serif;
+    --body-serif: 'Source Serif 4', Georgia, serif;
+
+    /* Transitions — évite le layout shift (CLS) */
+    --ease:       cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── 1. Reset ciblé (pas de margin collapse surprenant → CLS stable) ──────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── 2. Base ───────────────────────────────────────────────────────────────── */
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%; /* Évite les redimensionnements mobiles → CLS */
+}
+
+body {
+    font-family: var(--body-serif);
+    font-size: clamp(1rem, 1.1vw, 1.125rem);
+    line-height: 1.75;
+    color: var(--ink);
+    background: var(--paper);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── 3. Typographie ────────────────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+    font-family: var(--serif);
+    line-height: 1.2;
+    color: var(--ink);
+}
+
+/* H1 – mot-clé principal, unique par page (cours p.8) */
+h1.main-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: -.02em;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid var(--red);
+    position: relative;
+}
+
+/* H2 – mots-clés secondaires (cours p.8) */
+.entry-content h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--red);
+    margin: 2.5rem 0 .75rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--light);
+}
+
+.entry-content h3 {
+    font-size: 1.25rem;
+    color: var(--mid);
+    margin: 1.75rem 0 .5rem;
+}
+
+p { margin-bottom: 1.25rem; }
+
+a {
+    color: var(--red);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: color .2s var(--ease);
+}
+a:hover { color: var(--red-dark); }
+
+/* ── 4. Conteneur ─────────────────────────────────────────────────────────── */
+.container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--gap);
+}
+
+/* ── 5. Header ─────────────────────────────────────────────────────────────── */
+.main-header {
+    background: var(--ink);
+    color: var(--white);
+    border-bottom: 3px solid var(--red);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    /* CLS : hauteur fixée pour éviter les décalages au chargement */
+    min-height: 64px;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: .9rem;
+    padding-bottom: .9rem;
+}
+
+/* Logo */
+.logo {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--white);
+    text-decoration: none;
+    letter-spacing: -.03em;
+    white-space: nowrap;
+    transition: opacity .2s var(--ease);
+}
+.logo:hover { opacity: .8; color: var(--white); }
+.logo span  { color: var(--red); }
+
+/* Navigation */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: clamp(.5rem, 1.5vw, 1.5rem);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    font-family: var(--serif);
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #ccc;
+    text-decoration: none;
+    padding: .4rem .2rem;
+    border-bottom: 2px solid transparent;
+    transition: color .2s var(--ease), border-color .2s var(--ease);
+    /* Touch target ≥ 48 px (cours p.11) */
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"] {
+    color: var(--white);
+    border-bottom-color: var(--red);
+}
+
+/* Hamburger (mobile) */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: .5rem;
+    /* Touch target ≥ 48 px */
+    min-width: 48px;
+    min-height: 48px;
+    justify-content: center;
+    align-items: center;
+}
+.nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--white);
+    transition: transform .25s var(--ease), opacity .25s var(--ease);
+}
+
+/* ── 6. Main & Article ─────────────────────────────────────────────────────── */
+main {
+    flex: 1;
+    padding: clamp(2rem, 5vw, 4rem) var(--gap);
+}
+
+.page-article {
+    max-width: 820px;
+}
+
+.entry-content {
+    background: var(--white);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--red);
+    box-shadow: 0 2px 24px rgba(0,0,0,.06);
+}
+
+/* Images dans le contenu — évite le CLS (cours p.10) */
+.entry-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;        /* ratio préservé */
+    border-radius: var(--radius);
+    margin: 1.5rem 0;
+}
+
+/* Listes */
+.entry-content ul,
+.entry-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+.entry-content li { margin-bottom: .4rem; }
+
+/* Blockquote */
+.entry-content blockquote {
+    border-left: 4px solid var(--gold);
+    padding: .75rem 1.25rem;
+    margin: 1.5rem 0;
+    background: #fdfaf4;
+    font-style: italic;
+    color: var(--mid);
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* Code inline */
+.entry-content code {
+    font-family: 'Courier New', monospace;
+    font-size: .88em;
+    background: var(--light);
+    padding: .1em .4em;
+    border-radius: 3px;
+    color: var(--red-dark);
+}
+
+/* ── 7. Section "Dossiers" (grille accueil) ────────────────────────────────── */
+.secondary-content {
+    margin-top: 3rem;
+}
+
+.secondary-content h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-family: var(--serif);
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+    border-bottom: 2px solid var(--red);
+    padding-bottom: .5rem;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+}
+
+.card {
+    background: var(--white);
+    border-top: 4px solid var(--red);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    /* INP – transform GPU déclenche le compositing → pas de repaint */
+    transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.1);
+}
+.card h3 {
+    font-size: 1.1rem;
+    color: var(--ink);
+}
+
+.btn-link {
+    display: inline-block;
+    font-family: var(--serif);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--red);
+    text-decoration: none;
+    padding: .5rem 1rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--red);
+    transition: background .2s var(--ease), color .2s var(--ease);
+    align-self: flex-start;
+    /* Touch target ≥ 48 px */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+.btn-link:hover {
+    background: transparent;
+    color: var(--red);
+}
+
+/* ── 8. Footer ─────────────────────────────────────────────────────────────── */
+.main-footer {
+    background: var(--ink);
+    color: #aaa;
+    padding: 2.5rem var(--gap);
+    margin-top: auto;
+    border-top: 3px solid var(--red);
+}
+
+.footer-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.footer-logo {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--white);
+    margin-bottom: .4rem;
+}
+.footer-logo span { color: var(--red); }
+
+.footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    align-items: center;
+}
+.footer-links a {
+    color: #888;
+    text-decoration: none;
+    font-size: .85rem;
+    transition: color .2s var(--ease);
+}
+.footer-links a:hover { color: var(--white); }
+
+.footer-meta {
+    text-align: right;
+    font-size: .8rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+/* ── 9. Responsive (Mobile-First – cours p.11) ─────────────────────────────── */
+@media (max-width: 768px) {
+
+    /* Navigation mobile */
+    .nav-toggle { display: flex; }
+
+    #main-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #1a1a1a;
+        border-top: 2px solid var(--red);
+        padding: 1rem var(--gap);
+    }
+    #main-nav.is-open { display: block; }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+    .nav-links a {
+        width: 100%;
+        padding: .75rem 0;
+        border-bottom: 1px solid #2a2a2a;
+        border-right: none;
+    }
+
+    /* Footer empilé */
+    .footer-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .footer-links  { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+    .footer-meta   { text-align: center; }
+    .footer-brand  { text-align: center; }
+}
+
+@media (max-width: 480px) {
+    .category-grid { grid-template-columns: 1fr; }
+    .page-article  { max-width: 100%; }
+}
+
+/* ── 10. Accessibilité ─────────────────────────────────────────────────────── */
+:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+}
+
+/* Lien d'évitement (skip-link) */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    background: var(--red);
+    color: var(--white);
+    padding: .6rem 1.2rem;
+    border-radius: 0 0 var(--radius) var(--radius);
+    font-weight: 700;
+    z-index: 1000;
+    text-decoration: none;
+}
+.skip-link:focus { top: 0; }
+
+/* Print – performances & lisibilité */
+@media print {
+    .main-header, .main-footer, .nav-toggle, .btn-link { display: none; }
+    body   { background: #fff; color: #000; font-size: 12pt; }
+    a      { color: #000; text-decoration: none; }
+    a[href]::after { content: " (" attr(href) ")"; font-size: .85em; color: #555; }
+}

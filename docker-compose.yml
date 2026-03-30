@@ -1,5 +1,4 @@
 services:
-  # Base de données PostgreSQL (Point 2 du sujet)
   db:
     image: postgres:15-alpine
     container_name: iran_db_container
@@ -8,12 +7,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
     volumes:
-      # Initialise la table 'pages' au premier lancement
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - iran-network
 
-  # Serveur Web PHP (FrontOffice et BackOffice)
   app:
     image: php:8.2-apache
     container_name: iran_web_app
@@ -21,16 +18,9 @@ services:
       - db
     ports:
       - "8080:80"
-    environment:
-      DB_HOST: db
-      DB_NAME: guerre_iran_db
-      DB_USER: admin
-      DB_PASS: password
-      DB_PORT: 5432
     volumes:
       - .:/var/www/html
-      # Active l'URL Rewriting (Point 1 et 20 du sujet)
-      - ./config/apache.conf:/etc/apache2/conf-available/custom.conf
+      - ./config/apache.conf:/etc/apache2/sites-available/000-default.conf
     networks:
       - iran-network
     command: >
@@ -38,7 +28,6 @@ services:
              apt-get install -y libpq-dev && 
              docker-php-ext-install pdo pdo_pgsql && 
              a2enmod rewrite && 
-             sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf &&
              apache2-foreground"
 
 networks:

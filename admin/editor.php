@@ -14,7 +14,7 @@ $title = "Nouvelle page sur l'Iran";
     <title>Backoffice - Éditeur de contenu</title>
     <link rel="stylesheet" href="//unpkg.com/grapesjs/dist/css/grapes.min.css">
     <script src="//unpkg.com/grapesjs"></script>
-    <style>
+    <style> 
         body, html { height: 100%; margin: 0; overflow: hidden; }
         #gjs { border: 3px solid #444; }
         .panel__top { padding: 10px; background: #2c3e50; color: white; display: flex; justify-content: space-between; }
