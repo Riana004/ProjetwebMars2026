@@ -108,17 +108,6 @@ $title = "Nouvelle page sur l'Iran";
                 <button class="save-btn" style="margin-left: 6px;" onclick="loadContent()">Charger</button>
             </div>
             <div>
-                <label style="margin-right: 8px; font-size: 14px;">
-                    Image :
-                    <input type="file" id="page-image-file" accept="image/*"
-                        style="padding: 5px; border-radius: 3px; border: none; margin-left: 4px;">
-                </label>
-                <label style="margin-right: 12px; font-size: 14px;">
-                    Alt :
-                    <input type="text" id="page-alt" placeholder="Texte alternatif"
-                        style="padding: 5px; border-radius: 3px; border: none; margin-left: 4px;">
-                </label>
-                <span id="page-image-name" style="font-size: 12px; margin-right: 12px;"></span>
                 <a class="logout-link" href="index.php?logout=1">Déconnexion</a>
                 <button class="save-btn" onclick="saveContent()">Enregistrer la page</button>
             </div>
@@ -212,9 +201,6 @@ $title = "Nouvelle page sur l'Iran";
             }
         });
 
-        const imageFileInput = document.getElementById('page-image-file');
-        const imageNameLabel = document.getElementById('page-image-name');
-
         function toSlug(value) {
             return value
                 .toLowerCase()
@@ -229,14 +215,6 @@ $title = "Nouvelle page sur l'Iran";
             const css = styleMatch ? styleMatch[1] : '';
             const html = rawContent.replace(/<style>[\s\S]*?<\/style>/i, '').trim();
             return { html, css };
-        }
-
-        if (imageFileInput) {
-            imageFileInput.addEventListener('change', () => {
-                const file = imageFileInput.files && imageFileInput.files[0];
-                imageNameLabel.textContent = file ? `Image choisie : ${file.name}` : '';
-                imageNameLabel.dataset.imageName = file ? file.name : '';
-            });
         }
 
         async function loadContent() {
@@ -264,12 +242,6 @@ $title = "Nouvelle page sur l'Iran";
 
                 titleInput.value = result.title || '';
                 slugInput.value = result.slug || slugValue;
-                document.getElementById('page-alt').value = result.alt_images || '';
-
-                imageNameLabel.textContent = result.image
-                    ? `Image actuelle : ${result.image}`
-                    : '';
-                imageNameLabel.dataset.imageName = result.image || '';
             } catch (e) {
                 alert('Erreur serveur.');
             }
@@ -280,8 +252,6 @@ $title = "Nouvelle page sur l'Iran";
             const html = editor.getHtml();
             const css = editor.getCss();
             const title = document.getElementById('page-title').value;
-            const image = imageNameLabel.dataset.imageName || '';
-            const altImages = document.getElementById('page-alt').value;
             const fullContent = `<style>${css}</style>${html}`;
 
             try {
@@ -291,9 +261,7 @@ $title = "Nouvelle page sur l'Iran";
                     body: JSON.stringify({
                         title: title,
                         content: fullContent,
-                        slug: toSlug(title),
-                        image: image,
-                        alt_images: altImages
+                        slug: toSlug(title)
                     })
                 });
                 const result = await response.json();
