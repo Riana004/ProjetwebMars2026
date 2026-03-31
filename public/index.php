@@ -14,6 +14,7 @@ $stmt = $pdo->prepare(
 );
 $stmt->execute(['slug' => $slug]);
 $page = $stmt->fetch();
+$is404 = !$page;
 
 // ─── 2. Navigation (titres + slugs pour le menu et la grille d'accueil) ────
 $categories = $pdo->query(
@@ -21,7 +22,7 @@ $categories = $pdo->query(
 )->fetchAll();
 
 // ─── 3. Gestion 404 – renvoie le bon code HTTP ─────────────────────────────
-if (!$page) {
+if ($is404) {
     header('HTTP/1.1 404 Not Found');
     $page = [
         'title' => 'Page non trouvée',
@@ -32,12 +33,12 @@ if (!$page) {
 
 // ─── 4. Helpers SEO ────────────────────────────────────────────────────────
 // Troncature sécurisée de la meta-description (≤ 159 caractères, cours p.8)
-$metaDesc = mb_substr(strip_tags($page['meta_desc']), 0, 159);
+$metaDesc = mb_substr(strip_tags((string)($page['meta_desc'] ?? '')), 0, 159);
 
 // Construction de l'URL canonique (cours p.9 – évite le contenu dupliqué)
 $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'example.com', ENT_QUOTES);
-$canonical = $proto . '://' . $host . '/index.php?slug=' . urlencode($slug);
+$canonical = $proto . '://' . $host . '/' . urlencode($slug) . '.html';
 
 // Titre de page : mot-clé en premier, ≤ 60 car. (cours p.8)
 $pageTitle = htmlspecialchars($page['title'], ENT_QUOTES)
@@ -94,7 +95,7 @@ $jsonLd = json_encode([
         Valeurs par défaut : index, follow.
         À changer en "noindex, nofollow" pour les pages privées ou les erreurs 404.
     -->
-    <?php if (!$page || $slug === '404'): ?>
+    <?php if ($is404): ?>
         <meta name="robots" content="noindex, nofollow">
     <?php else: ?>
         <meta name="robots" content="index, follow">
@@ -131,7 +132,7 @@ $jsonLd = json_encode([
             href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap">
     </noscript>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <!--
@@ -147,7 +148,7 @@ $jsonLd = json_encode([
                 Lien de marque : aria-label explicite (cours p.9 – ancres descriptives).
                 Évite "cliquez ici" → le texte d'ancre doit être descriptif.
             -->
-            <a href="/?slug=accueil" class="logo" aria-label="Iran News – Retour à l'accueil">
+            <a href="/accueil.html" class="logo" aria-label="Iran News – Retour à l'accueil">
                 Iran<span>News</span>
             </a>
 
@@ -164,13 +165,13 @@ $jsonLd = json_encode([
             <nav id="main-nav" role="navigation" aria-label="Menu principal">
                 <ul class="nav-links">
                     <li>
-                        <a href="accueil.html" <?= $slug === 'accueil' ? 'aria-current="page"' : '' ?>>
+                        <a href="/accueil.html" <?= $slug === 'accueil' ? 'aria-current="page"' : '' ?>>
                             Accueil
                         </a>
                     </li>
                     <?php foreach ($categories as $cat): ?>
                         <li>
-                            <a href="<?= urlencode($cat['slug']) ?>.html" <?= $slug === $cat['slug'] ? 'aria-current="page"' : '' ?>>
+                            <a href="/<?= urlencode($cat['slug']) ?>.html" <?= $slug === $cat['slug'] ? 'aria-current="page"' : '' ?>>
                                 <?= htmlspecialchars($cat['title']) ?>
                             </a>
                         </li>
@@ -218,7 +219,7 @@ $jsonLd = json_encode([
                         <?php foreach ($categories as $item): ?>
                             <div class="card">
                                 <h3><?= htmlspecialchars($item['title']) ?></h3>
-                                <a href="<?= urlencode($item['slug']) ?>.html" class="btn-link"
+                                <a href="/<?= urlencode($item['slug']) ?>.html" class="btn-link"
                                     title="Lire le dossier complet : <?= htmlspecialchars($item['title']) ?>">
                                     Consulter le dossier
                                 </a>
@@ -240,10 +241,10 @@ $jsonLd = json_encode([
             </div>
             <nav aria-label="Liens de pied de page">
                 <ul class="footer-links">
-                    <li><a href="/?slug=accueil">Accueil</a></li>
+                    <li><a href="/accueil.html">Accueil</a></li>
                     <?php foreach ($categories as $cat): ?>
                         <li>
-                            <a href="/?slug=<?= urlencode($cat['slug']) ?>">
+                            <a href="/<?= urlencode($cat['slug']) ?>.html">
                                 <?= htmlspecialchars($cat['title']) ?>
                             </a>
                         </li>

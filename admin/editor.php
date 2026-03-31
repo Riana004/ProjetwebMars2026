@@ -1,6 +1,11 @@
 <?php
 session_start();
-// Identifiants par défaut pour Mr Rojo : admin / password
+
+if (empty($_SESSION['is_admin'])) {
+    header('Location: index.php');
+    exit;
+}
+
 $title = "Nouvelle page sur l'Iran";
 ?>
 <!DOCTYPE html>
@@ -77,6 +82,13 @@ $title = "Nouvelle page sur l'Iran";
         .save-btn:hover {
             background: #2ecc71;
         }
+
+        .logout-link {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 12px;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -89,7 +101,10 @@ $title = "Nouvelle page sur l'Iran";
                 Titre : <input type="text" id="page-title" value="<?= htmlspecialchars($title) ?>"
                     style="padding: 5px; border-radius: 3px; border: none;">
             </div>
-            <button class="save-btn" onclick="saveContent()">Enregistrer la page</button>
+            <div>
+                <a class="logout-link" href="index.php?logout=1">Déconnexion</a>
+                <button class="save-btn" onclick="saveContent()">Enregistrer la page</button>
+            </div>
         </div>
 
         <div class="main-content">

@@ -4,6 +4,10 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
+# Si le dossier existe, on le laisse passer
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
 # Sinon, on transforme "nom-page.html" en "index.php?slug=nom-page"
 RewriteRule ^([a-zA-Z0-9-]+)\.html$ index.php?slug=$1 [L,QSA]
 
