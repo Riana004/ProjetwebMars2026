@@ -35,6 +35,8 @@ if (!is_array($payload)) {
 $title = trim((string)($payload['title'] ?? ''));
 $content = (string)($payload['content'] ?? '');
 $slugInput = trim((string)($payload['slug'] ?? ''));
+$image = trim((string)($payload['image'] ?? ''));
+$altImages = trim((string)($payload['alt_images'] ?? ''));
 
 if ($title === '' || trim($content) === '') {
 	http_response_code(422);
@@ -65,13 +67,15 @@ $metaDesc = mb_substr($metaDescRaw, 0, 160);
 
 try {
 	$stmt = $pdo->prepare(
-		"INSERT INTO pages (slug, title, content, meta_desc)
-		 VALUES (:slug, :title, :content, :meta_desc)
+		"INSERT INTO pages (slug, title, content, meta_desc, image, alt_images)
+		 VALUES (:slug, :title, :content, :meta_desc, :image, :alt_images)
 		 ON CONFLICT (slug)
 		 DO UPDATE SET
 			title = EXCLUDED.title,
 			content = EXCLUDED.content,
-			meta_desc = EXCLUDED.meta_desc"
+			meta_desc = EXCLUDED.meta_desc,
+			image = EXCLUDED.image,
+			alt_images = EXCLUDED.alt_images"
 	);
 
 	$stmt->execute([
@@ -79,6 +83,8 @@ try {
 		'title' => $title,
 		'content' => $content,
 		'meta_desc' => $metaDesc,
+		'image' => $image !== '' ? $image : null,
+		'alt_images' => $altImages !== '' ? $altImages : null,
 	]);
 
 	echo json_encode([
