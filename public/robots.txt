@@ -1,0 +1,28 @@
+# robots.txt — IranNews 2026
+# Cours SEO p.11 : contrôle du crawl budget
+# Référence : https://developers.google.com/search/docs/crawling-indexing/robots/intro
+
+User-agent: *
+
+# ── Pages publiques : autoriser l'indexation ──────────────────────────────
+Allow: /
+
+# ── Back-office : bloquer l'accès aux bots ───────────────────────────────
+# Le BO ne doit JAMAIS apparaître dans les SERP.
+Disallow: /admin/
+Disallow: /backoffice/
+Disallow: /bo/
+
+# ── Pages techniques : inutile à indexer ─────────────────────────────────
+Disallow: /config/
+Disallow: /includes/
+Disallow: /*.sql$
+Disallow: /*.log$
+
+# ── Paramètres de recherche / filtres ────────────────────────────────────
+# Évite le contenu dupliqué sur les URLs avec paramètres
+Disallow: /*?*
+
+# ── Sitemap XML ──────────────────────────────────────────────────────────
+# Déclarer le sitemap ici ET dans Google Search Console
+Sitemap: https://www.example.com/sitemap.xml
